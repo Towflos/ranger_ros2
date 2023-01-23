@@ -33,6 +33,9 @@ find_package(ugv_sdk REQUIRED)
 # find_package(<dependency> REQUIRED)
 include_directories(
   include
+  /opt/ros/humble/include/tf2_geometry_msgs
+  /opt/ros/humble/include/tf2
+  /opt/ros/humble/include/tf2_ros
 )
 
 
