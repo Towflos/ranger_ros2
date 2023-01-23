@@ -6,11 +6,8 @@
  *
  * Copyright (c) 2021 Weston Robot Pte. Ltd.
  */
-
 #include <memory>
-
 #include <rclcpp/rclcpp.hpp>
-#include <rclcpp/executor.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
 #include <tf2_ros/transform_broadcaster.h>

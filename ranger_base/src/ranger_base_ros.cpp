@@ -13,17 +13,17 @@
 namespace westonrobot {
 RangerBaseRos::RangerBaseRos(std::string node_name)
     : rclcpp::Node(node_name), keep_running_(false) {
-  this->declare_parameter("port_name");   //声明参数
+  this->declare_parameter("port_name","can0");   //声明参数
 
-  this->declare_parameter("odom_frame");
-  this->declare_parameter("base_frame");
-  this->declare_parameter("odom_topic_name");
+  this->declare_parameter("odom_frame", "odom");
+  this->declare_parameter("base_frame", "base_link");
+  this->declare_parameter("odom_topic_name", "odom");
 
-  this->declare_parameter("is_ranger_mini");
-  this->declare_parameter("is_omni_wheel");
+  this->declare_parameter("is_ranger_mini", "true");
+  this->declare_parameter("is_omni_wheel", "true");
 
-  this->declare_parameter("simulated_robot");
-  this->declare_parameter("control_rate");
+  this->declare_parameter("simulated_robot", "false");
+  this->declare_parameter("control_rate", "50");
 
   LoadParameters();
 }
@@ -93,16 +93,11 @@ void RangerBaseRos::Run() {
     if (simulated_robot_) messenger->SetSimulationMode(sim_control_rate_);
     // connect to robot and setup ROS subscription
     if (port_name_.find("can") != std::string::npos) {
-      if (robot_->Connect(port_name_)) {
-
-        robot_->EnableCommandedMode();
-        // std::cout << "run:state 6"<< std::endl;
-        // std::cout << "EnableCommandedMode" << std::endl;
-        std::cout << "Using CAN bus to talk with the robot" << std::endl;
-      } else {
-        std::cout << "Failed to connect to the robot CAN bus" << std::endl;
-        return;
-      }
+      	robot_->Connect(port_name_);
+	robot_->EnableCommandedMode();
+	// std::cout << "run:state 6"<< std::endl;
+	// std::cout << "EnableCommandedMode" << std::endl;
+	std::cout << "Using CAN bus to talk with the robot" << std::endl;
     } else {
       std::cout << "Please check the specified port name is a CAN port"
                 << std::endl;
