@@ -18,7 +18,7 @@
 #include <nav_msgs/msg/odometry.hpp>
 #include <geometry_msgs/msg/twist.hpp>
 #include <tf2_ros/transform_broadcaster.h>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 #include "ranger_base/ranger_params.hpp"
 
@@ -109,9 +109,8 @@ class RangerMessenger {
     status_msg.control_mode = state.system_state.control_mode;
     status_msg.error_code = state.system_state.error_code;
     status_msg.battery_voltage = state.system_state.battery_voltage;
-    status_msg.motion_mode_state = state.motion_mode_state.motion_mode;
+    status_msg.motion_mode_state = state.current_motion_mode.motion_mode;
     motion_mode_ = status_msg.motion_mode_state;
-
     auto actuator = ranger_->GetActuatorState();
 
     for (int i = 0; i < 8; ++i) {
