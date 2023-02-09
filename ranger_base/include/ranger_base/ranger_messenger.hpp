@@ -18,7 +18,7 @@
 #include <nav_msgs/msg/odometry.hpp>
 #include <geometry_msgs/msg/twist.hpp>
 #include <tf2_ros/transform_broadcaster.h>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
 #include "ranger_base/ranger_params.hpp"
 
@@ -140,7 +140,11 @@ class RangerMessenger {
     double l_v = 0.0, a_v = 0.0, phi = 0.0;
   // x , y direction linear velocity, motion radius
     double x_v = 0.0, y_v = 0.0, radius = 0.0;
-    double phi_i = state.motion_state.steering_angle / 180.0 * M_PI;
+    //double phi_i = -(state.motion_state.steering_angle*10.4/180)*M_PI;
+    //double phi_i = -(state.motion_state.steering_angle/180)*M_PI;
+    double phi_i = -(state.motion_state.steering_angle*M_PI*M_PI*M_PI)/180;
+    std::cout<<"phi_i: "<<phi_i<<std::endl;
+    std::cout<<"phi_deg:"<<state.motion_state.steering_angle<<std::endl;
     // std::cout <<  motion_mode_ << std::endl;
     switch (motion_mode_) 
     {
@@ -148,6 +152,7 @@ class RangerMessenger {
         std::cout <<"motion_mode_ :0"<< std::endl;
         l_v = state.motion_state.linear_velocity;
         double r = s / std::tan(std::fabs(phi_i)) + s;
+        std::cout<<"r: "<<r<<std::endl;
         phi = ConvertInnerAngleToCentral(phi_i);
         if (phi > steer_angle_tolerance) {
           a_v = state.motion_state.linear_velocity / r;
@@ -332,7 +337,7 @@ class RangerMessenger {
  
   }
 
-  double ConvertCentralAngleToInner(double angle)
+  double ConvertInnerAngleToCentral(double angle)
   {
     double phi = 0;
     double phi_i = angle;
@@ -348,7 +353,8 @@ class RangerMessenger {
     }
     return phi;
   }
-  double ConvertInnerAngleToCentral(double angle)
+
+  double ConvertCentralAngleToInner(double angle)
   {
     double phi = angle;
     double phi_i = 0;
@@ -378,7 +384,7 @@ class RangerMessenger {
     angular_vel_ = angle_vel;
     x_linear_vel_ = x_linear_vel;
     y_linear_vel_ = y_linear_vel;
-    double theta = angular_vel_ * dt;
+    double theta = -angular_vel_ * dt;
 
     position_x_ +=
       cos(theta_) * x_linear_vel_ * dt - sin(theta_) * y_linear_vel_ * dt;
@@ -421,7 +427,7 @@ class RangerMessenger {
 
     odom_msg.twist.twist.linear.x = x_linear_vel_;
     odom_msg.twist.twist.linear.y = y_linear_vel_;
-    odom_msg.twist.twist.angular.z = angular_vel_;
+    odom_msg.twist.twist.angular.z = -angular_vel_; // correct steering direction
 
     odom_msg.pose.covariance = {
     0.001,      0.0,        0.0,        0.0,        0.0,        0.0,
